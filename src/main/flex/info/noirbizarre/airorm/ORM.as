@@ -108,16 +108,23 @@ package info.noirbizarre.airorm
 			if (!schema)
 			{
 				var fields:Array = [];
+				var primaryKeyField:String;
 				
 				for each (field in publicVars)
 				{
 					fieldDef = [field.@name, dbTypes[field.@type]];
 					
-					if (field.@name == primaryKey)
+					if (field.@name == primaryKey) {
 						fieldDef.push("PRIMARY KEY AUTOINCREMENT");
-					
-					fields.push(fieldDef.join(" "));
+						primaryKeyField = fieldDef.join(" ");
+					}
+					else {
+						fields.push(fieldDef.join(" "));
+					}
 				}
+				
+				// Order our fields with out primary key first
+				fields = primaryKeyField ? [primaryKeyField].concat(fields.sort()) : fields.sort();
 				
 				sql = "CREATE TABLE " + tableName + " (" + fields.join(", ") + ")";
 				stmt.text = sql;
