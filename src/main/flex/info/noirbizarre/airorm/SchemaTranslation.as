@@ -5,6 +5,10 @@ package info.noirbizarre.airorm
 	import info.noirbizarre.airorm.utils.Inflector;
 	import info.noirbizarre.airorm.utils.Reflection;
 	
+	import org.as3commons.reflect.Field;
+	import org.as3commons.reflect.Metadata;
+	import org.as3commons.reflect.Type;
+	
 	/**
 	 * Retrieve database metadata from class name
 	 */
@@ -103,12 +107,15 @@ package info.noirbizarre.airorm
 		 */
 		public function getCreatedField(obj:Object):String
 		{
-			var members:XMLList = Reflection.getByMetadata(obj,"Timestamp");
-			for each (var member:XML in members) {
-				if (member.metadata.(@name == "Timestamp" && elements("arg").(@value == "creation").length()).length()) {
-					return member.@name
+			var typeData:Type = Type.forInstance(obj);
+			for each (var property:Field in typeData.fields) {
+				for each (var metadata:Metadata in property.metadata) {
+					if (metadata.name == "timestamp" && metadata.getArgument("on") && metadata.getArgument("on").value == "creation") {
+						return property.name;
+					}
 				}
-			} 
+			}
+			
 			return null;
 		}
 		
@@ -117,12 +124,15 @@ package info.noirbizarre.airorm
 		 */
 		public function getModifiedField(obj:Object):String
 		{
-			var members:XMLList = Reflection.getByMetadata(obj,"Timestamp");
-			for each (var member:XML in members) {
-				if (member.metadata.(@name == "Timestamp" && elements("arg").(@value == "modification").length()).length()) {
-					return member.@name
+			var typeData:Type = Type.forInstance(obj);
+			for each (var property:Field in typeData.fields) {
+				for each (var metadata:Metadata in property.metadata) {
+					if (metadata.name == "timestamp" && metadata.getArgument("on") && metadata.getArgument("on").value == "modification") {
+						return property.name;
+					}
 				}
-			} 
+			}
+			 
 			return null;
 		}
 	}

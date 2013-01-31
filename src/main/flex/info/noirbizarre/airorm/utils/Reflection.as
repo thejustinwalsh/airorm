@@ -61,7 +61,7 @@ package info.noirbizarre.airorm.utils
 		public static function getByMetadata(obj:Object, metadataType:String, includeSuperClasses:Boolean = false):XMLList
 		{
 			var info:XML = describe(obj);
-			var metadata:XMLList = info.*.(hasOwnProperty("metadata") && elements("metadata").(@name == metadataType).length() > 0);
+			var metadata:XMLList = info.*.hasOwnProperty("metadata") ? info.*.elements("metadata").(@name == metadataType) : new XMLList();
 			
 			if (includeSuperClasses && info.extendsClass.length())
 				metadata += getByMetadata(info.extendsClass[0].@type, metadataType, true);
@@ -72,7 +72,7 @@ package info.noirbizarre.airorm.utils
 		public static function getMetadataByArg(obj:Object, argKey:String, argValue:String, includeSuperClasses:Boolean = false):XMLList
 		{
 			var info:XML = describe(obj);
-			var metadata:XMLList = info..metadata.(hasOwnProperty("arg") && elements("arg").(@key == argKey && @value == argValue).length() > 0);
+			var metadata:XMLList = info..metadata.hasOwnProperty("arg") ? info..metadata.elements("arg").(@key == argKey && @value == argValue) : new XMLList();
 			
 			if (includeSuperClasses && info.extendsClass.length())
 				metadata += getMetadataByArg(info.extendsClass[0].@type, argKey, argValue, true);
